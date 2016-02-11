@@ -44,6 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculator.cs" />
+    <Compile Include="IncorrectOperationStringException.cs" />
+    <Compile Include="ONPOperation.cs" />
+    <Compile Include="OperationElement.cs" />
+    <Compile Include="OperationElementType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

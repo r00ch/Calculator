@@ -4,15 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ONP
+namespace ONP.Tests
 {
     static class Program
     {
         static void Main()
         {
-            Calculator calc = new Calculator();
-            calc.OperationToElements("3+2");
-            Console.ReadLine();
+
         }
     }
 }
