@@ -45,5 +45,43 @@ namespace ONP
                 || character == '('
                 || character == ')') ;
         }
+
+        public Queue<OperationElement> OperationElementsToONP(Queue<OperationElement> operationElements)
+        {
+            Queue<OperationElement> result = new Queue<OperationElement>();
+            Stack<OperationElement> operators = new Stack<OperationElement>();
+            foreach (var element in operationElements)
+            {
+                if (element.Type == OperationElementType.NUMBER)
+                    result.Enqueue(element);
+                else if (element.Value == "(") operators.Push(element);
+                else if (element.Value == ")")
+                {
+                    while (operators.Peek().Value != "(") result.Enqueue(operators.Pop());
+                    if (operators.Count == 0) throw new IncorrectOperationStringException("Niepoprawna liczba nawiasów.");
+                    else operators.Pop();
+                }
+                else if (element.Type == OperationElementType.OPERATOR)
+                {
+                    while (operators.Count != 0 && DesignateOperatorPriority(element) <= DesignateOperatorPriority(operators.Peek()))
+                        result.Enqueue(operators.Pop());
+                    operators.Push(element);
+                }
+            }
+            while (operators.Count != 0) result.Enqueue(operators.Pop());
+            return result;
+        }
+
+        private int DesignateOperatorPriority(OperationElement element)
+        {
+            if (element.Value == "(")
+                return 0;
+            else if (element.Value == "+"
+                  || element.Value == "-"
+                  || element.Value == ")")
+                return 1;
+            else return 2;
+        }
+
     }
 }
