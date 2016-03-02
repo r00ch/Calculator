@@ -1,16 +1,38 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ONP
 {
     public class Calculator
     {
-        public object Calculate(string operation)
+        public double Calculate(string operation)
         {
+			if (operation == "") throw new EmptyStringException();
             var operationElements = OperationToElements(operation);
+			var operationONP = OperationElementsToONP(operationElements);
 
-            throw new NotImplementedException();
+			Stack<double> operationNumbers = new Stack<double>();
+			
+
+			foreach (var operationElement in operationONP)
+			{
+				if (operationElement.Type == OperationElementType.NUMBER)
+					operationNumbers.Push(Double.Parse(operationElement.Value));
+				else
+				{
+					var secondNumber = operationNumbers.Pop();
+					var firstNumber = operationNumbers.Pop(); //Kolejność ściągania ze stosu jest tutaj kluczowa
+					if (operationElement.Value == "+")
+						operationNumbers.Push(firstNumber + secondNumber);
+					else if (operationElement.Value == "-")
+						operationNumbers.Push(firstNumber - secondNumber);
+					else if (operationElement.Value == "*")
+						operationNumbers.Push(firstNumber * secondNumber);
+					else if (operationElement.Value == "/")
+						operationNumbers.Push(firstNumber / secondNumber);
+				}
+			}
+			return operationNumbers.Pop();
         }
 
         public Queue<OperationElement> OperationToElements(string operation)
@@ -58,8 +80,7 @@ namespace ONP
                 else if (element.Value == ")")
                 {
                     while (operators.Peek().Value != "(") result.Enqueue(operators.Pop());
-                    if (operators.Count == 0) throw new IncorrectOperationStringException("Niepoprawna liczba nawiasów.");
-                    else operators.Pop();
+                    operators.Pop();
                 }
                 else if (element.Type == OperationElementType.OPERATOR)
                 {

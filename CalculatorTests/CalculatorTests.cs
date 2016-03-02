@@ -10,12 +10,28 @@ namespace ONP.Tests
     public class CalculatorTests
     {
         [Test]
-        public void Calculate_EmptyString_Throws()
+        public void Calculate_EmptyString_ThrowsEmptyStringException()
         {
             var calc = new Calculator();
-            Assert.Throws<NotImplementedException>(() => calc.Calculate(""));
+            Assert.Throws<EmptyStringException>(() => calc.Calculate(""));
         }
-        [Test]
+		[Test]
+		public void Calculate_ValidOperationString_ReturnsAnswer1()
+		{
+			var calc = new Calculator();
+			var result = calc.Calculate("3+2");
+			var expectation = 5;
+			Assert.AreEqual(expectation, result);
+		}
+		[Test]
+		public void Calculate_ValidOperationString_ReturnsAnswer2()
+		{
+			var calc = new Calculator();
+			var result = calc.Calculate("((2+7)/3+(14-3)*4)/2");
+			var expectation = 23.5;
+			Assert.AreEqual(expectation, result);
+		}
+		[Test]
         public void OperationToElements_invalidOperationString_ThrowsIncorrectOperationStringException()
         {
             var calc = new Calculator();
