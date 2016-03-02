@@ -22,20 +22,25 @@ namespace ONP
 				{
 					var secondNumber = operationNumbers.Pop();
 					var firstNumber = operationNumbers.Pop(); //Kolejność ściągania ze stosu jest tutaj kluczowa
-					if (operationElement.Value == "+")
-						operationNumbers.Push(firstNumber + secondNumber);
-					else if (operationElement.Value == "-")
-						operationNumbers.Push(firstNumber - secondNumber);
-					else if (operationElement.Value == "*")
-						operationNumbers.Push(firstNumber * secondNumber);
-					else if (operationElement.Value == "/")
-						operationNumbers.Push(firstNumber / secondNumber);
+					operationNumbers.Push(CommitOperation(operationElement.Value, firstNumber, secondNumber));
 				}
 			}
 			return operationNumbers.Pop();
         }
 
-        public Queue<OperationElement> OperationToElements(string operation)
+		private double CommitOperation(string operation, double firstNumber, double secondNumber)
+		{
+			switch (operation)
+			{
+				case "+": return firstNumber + secondNumber;
+				case "-": return firstNumber - secondNumber;
+				case "*": return firstNumber * secondNumber;
+				case "/": return firstNumber / secondNumber;
+				default: throw new IncorrectOperationStringException(String.Format("Not supported operator used: {0}", operation));
+			}
+		}
+
+		public Queue<OperationElement> OperationToElements(string operation)
         {
             var operationElements = new Queue<OperationElement>();
             string bufforForLongerNumbers = "";
