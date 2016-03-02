@@ -45,11 +45,15 @@
   <ItemGroup>
     <Compile Include="Calculator.cs" />
     <Compile Include="EmptyStringException.cs" />
+    <Compile Include="ExpressionTransformer.cs" />
     <Compile Include="IncorrectOperationStringException.cs" />
+    <Compile Include="IOnpAlgorithm.cs" />
+    <Compile Include="OnpAlgorithm.cs" />
     <Compile Include="OperationElement.cs" />
     <Compile Include="OperationElementType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleCalculations.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
