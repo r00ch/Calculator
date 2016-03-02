@@ -1,0 +1,18 @@
+﻿Krótki zapis pozwala na coś takiego:
+if(condition)
+	DoSomething();
+
+Ale uwaga - załóżmy, że po jakimś czasie trzeba coś zmienić
+if(condition)
+	DoSomething();
+	DoSomething2();
+i wkrada się w prosty sposób błąd, bo DoSomething2() zawsze się wykonuje!
+
+Trzeba użyć nawiasów
+if(condition)
+{
+	DoSomething();
+	DoSomething2();
+}
+
+Dlatego należy uważać na te jednolinijkowce :) Używanie zależy od Ciebie i Twojej firmy ;)

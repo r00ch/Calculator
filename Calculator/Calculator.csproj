@@ -46,7 +46,6 @@
     <Compile Include="Calculator.cs" />
     <Compile Include="EmptyStringException.cs" />
     <Compile Include="IncorrectOperationStringException.cs" />
-    <Compile Include="ONPOperation.cs" />
     <Compile Include="OperationElement.cs" />
     <Compile Include="OperationElementType.cs" />
     <Compile Include="Program.cs" />
@@ -54,6 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ExampleIfProblem.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
