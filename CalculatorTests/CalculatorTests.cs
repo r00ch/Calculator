@@ -1,140 +1,75 @@
 ﻿using NUnit.Framework;
-using ONP;
+using Calculator;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ONP.Tests
 {
-    [TestFixture]
-    public class CalculatorTests
-    {
-        [Test]
+	[TestFixture]
+	internal class CalculatorTests
+	{
+		[SetUp]
+		public void InitializeCalculator()
+		{
+			calculator = new Calculator(new ExpressionTransformer(), new OnpAlgorithm());
+		}
+
+		[TestCase("-3+2", -1)]
+		[TestCase("(-3+2)",-1)]
+		public void Calculate_WhenNegativeNumbersAreFirst(string expression, double expected)
+		{
+			var result = calculator.Calculate(expression);
+
+			Assert.That(result, Is.EqualTo(expected));
+		}
+
+		[Test]
+		public void Calculate_WhenExpressionContainsJustBracketsAndOperators()
+		{
+			TestDelegate td= ()=> calculator.Calculate("(){}*/+-");
+
+			Assert.Throws<IncorrectOperationStringException>(td);
+		}
+
+		[Test]
+		public void Calculate_WhenExpressionIsJustANumber()
+		{
+			var result = calculator.Calculate("2");
+
+			Assert.That(result, Is.EqualTo(2));
+		}
+
+		[Test]
+		public void Calculate_DividingByZero()
+		{
+			TestDelegate td = ()=> calculator.Calculate("2/0");
+
+			Assert.Throws<DivideByZeroException>(td);
+		}
+
+		[Test]
         public void Calculate_EmptyString_ThrowsEmptyStringException()
         {
-            var calc = new Calculator();
-            Assert.Throws<EmptyStringException>(() => calc.Calculate(""));
+			TestDelegate td = () => calculator.Calculate("");
+
+			Assert.Throws<EmptyStringException>(td);
         }
+
 		[Test]
-		public void Calculate_ValidOperationString_ReturnsAnswer1()
+		public void Calculate_ValidOperationString_Returns1()
 		{
-			var calc = new Calculator();
-			var result = calc.Calculate("3+2");
-			var expectation = 5;
-			Assert.AreEqual(expectation, result);
+			var sumResult = calculator.Calculate("3+2");
+
+			Assert.AreEqual(5, sumResult);
 		}
+
 		[Test]
-		public void Calculate_ValidOperationString_ReturnsAnswer2()
+		public void Calculate_WhenAllOperatorUsedInExpression_Returns23_5()
 		{
-			var calc = new Calculator();
-			var result = calc.Calculate("((2+7)/3+(14-3)*4)/2");
-			var expectation = 23.5;
-			Assert.AreEqual(expectation, result);
+			var resultOfAllOperatorUsedInExpression = calculator.Calculate("((2+7)/3+(14-3)*4)/2");
+
+			Assert.AreEqual(23.5, resultOfAllOperatorUsedInExpression);
 		}
-		[Test]
-        public void OperationToElements_invalidOperationString_ThrowsIncorrectOperationStringException()
-        {
-            var calc = new Calculator();
-            Assert.Throws<IncorrectOperationStringException>(() => calc.OperationToElements("2!2"));
-        }
-        [Test]
-        public void OperationToElements_validOperationString_ElementsInQueue()
-        {
-            var calc = new Calculator();
-            var result = calc.OperationToElements("3+2");
-            var expectation = new Queue<OperationElement>();
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER,"3"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "+"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "2"));
-            Assert.AreEqual(expectation.Select(r => r.ToTestValue()), result.Select(r => r.ToTestValue()));
-        }
-        [Test]
-        public void OperationToElements_validOperationString_ElementsInQueue2()
-        {
-            var calc = new Calculator();
-            var result = calc.OperationToElements("(3+2)-2");
-            var expectation = new Queue<OperationElement>();
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "("));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "3"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "+"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "2"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, ")"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "-"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "2"));
-            Assert.AreEqual(expectation.Select(r => r.ToTestValue()), result.Select(r => r.ToTestValue()));
-        }
-        [Test]
-        public void OperationElementsToONP_validOperationElements_ElementsInONPQueue()
-        {
-            var calc = new Calculator();
-            var operationElements = new Queue<OperationElement>();
-            operationElements = calc.OperationToElements("3+2");
-            var expectation = new Queue<OperationElement>();
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "3"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "2"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "+"));
-            var result = calc.OperationElementsToONP(operationElements);
-            Assert.AreEqual(expectation.Select(r => r.ToTestValue()), result.Select(r => r.ToTestValue()));
-        }
-        [Test]
-        public void OperationElementsToONP_validOperationElements_ElementsInONPQueue2() 
-        {
-            var calc = new Calculator();
-            var operationElements = new Queue<OperationElement>();
-            operationElements = calc.OperationToElements("2+3*5");
-            var expectation = new Queue<OperationElement>();
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "2"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "3"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "5"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "*"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "+"));
-            var result = calc.OperationElementsToONP(operationElements);
-            Assert.AreEqual(expectation.Select(r => r.ToTestValue()), result.Select(r => r.ToTestValue()));
-        }
-        [Test]
-        public void OperationElementsToONP_validOperationElements_ElementsInONPQueue3()
-        {
-            var calc = new Calculator();
-            var operationElements = new Queue<OperationElement>();
-            operationElements = calc.OperationToElements("(2+3)*5");
-            var expectation = new Queue<OperationElement>();
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "2"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "3"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "+"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "5"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "*"));
-            var result = calc.OperationElementsToONP(operationElements);
-            Assert.AreEqual(expectation.Select(r => r.ToTestValue()), result.Select(r => r.ToTestValue()));
-        }
-        [Test]
-        public void OperationElementsToONP_validOperationElements_ElementsInONPQueue4()
-        {
-            var calc = new Calculator();
-            var operationElements = new Queue<OperationElement>();
-            operationElements = calc.OperationToElements("((2+7)/3+(14-3)*4)/2");
-            var expectation = new Queue<OperationElement>();
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "2"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "7"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "+"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "3"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "/"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "14"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "3"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "-"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "4"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "*"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "+"));
-            expectation.Enqueue(new OperationElement(OperationElementType.NUMBER, "2"));
-            expectation.Enqueue(new OperationElement(OperationElementType.OPERATOR, "/"));
-            var result = calc.OperationElementsToONP(operationElements);
-            Assert.AreEqual(expectation.Select(r => r.ToTestValue()), result.Select(r => r.ToTestValue()));
-        }
-    }
-    public static class TestValues
-    {
-        public static string ToTestValue(this OperationElement oe)
-        {
-            return $"type: {oe.Type} value: {oe.Value}";
-        }
-    }
+
+		private Calculator calculator;
+	}
 }

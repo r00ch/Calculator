@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ONP
+﻿namespace ONP
 {
-    public enum OperationElementType
+	//aktualna konwencja jest aby nie pisać dużymi literami, lecz używać CamelCase
+	public enum OperationElementType
     {
-        NUMBER,
-        OPERATOR
+        Number,
+        Operator
     }
 }
