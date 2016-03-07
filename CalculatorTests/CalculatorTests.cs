@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using ONP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,48 @@ namespace ONP.Tests
     [TestFixture]
     public class CalculatorTests
     {
-        [Test]
+		[TestCase("-3+2", -1)]
+		[TestCase("(-3+2)",-1)]
+		public void Calculate_WhenNegativeNumbersAreFirst(string expression, double expected)
+		{
+			var calc = new Calculator();
+
+			var result = calc.Calculate(expression);
+
+			Assert.That(result, Is.EqualTo(expected));
+		}
+
+		[Test]
+		public void Calculate_WhenExpressionContainsJustBracketsAndOperators()
+		{
+			var calc = new Calculator();
+
+			TestDelegate td= ()=> calc.Calculate("(){}*/+-");
+
+			Assert.Throws<IncorrectOperationStringException>(td);
+		}
+
+		[Test]
+		public void Calculate_WhenExpressionIsJustANumber()
+		{
+			var calc = new Calculator();
+
+			var result = calc.Calculate("2");
+
+			Assert.That(result, Is.EqualTo(2));
+		}
+
+		[Test]
+		public void Calculate_DividingByZero()
+		{
+			var calc = new Calculator();
+
+			TestDelegate td = ()=> calc.Calculate("2/0");
+
+			Assert.Throws<DivideByZeroException>(td);
+		}
+
+		[Test]
         public void Calculate_EmptyString_ThrowsEmptyStringException()
         {
             var calc = new Calculator();
